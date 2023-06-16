@@ -8,9 +8,23 @@ import (
 )
 
 func Router(){
-    r:= chi.NewRouter()
+    router:= chi.NewRouter()
 
-    r.Get("/",handler.HelloWorldHandler)
+    router.Get("/",handler.HelloWorldHandler)
 
-    http.ListenAndServe(":8080",r)
+    router.Post("/park/{platNumber}/{color}",handler.ParkHandler)
+    
+    router.Post("/create_parking_lot/{totalParkingLot}",handler.CreateParkingHandler)
+
+    router.Post("/leave/{slotNumber}",handler.LeaveHandler)
+
+    router.Get("/status",handler.StatusHandler)
+
+    router.Get("/cars_registration/colour/{color}",handler.FindRegisNumberByColor)
+
+    router.Get("/cars_slot/colour/{color}", handler.FindCarSlotsByColor)
+
+    router.Get("/slot_number/car_registration_number/{regisNumber}",handler.FindSlotNumberbyRegisNumber)
+
+    http.ListenAndServe(":8080",router)
 }
