@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"gitlab.mapan.io/playground/parking-lot-golang/handler"
+	"github.com/skyezon/parking-lot/handler"
 )
 
 func Router(){

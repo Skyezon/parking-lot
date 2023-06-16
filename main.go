@@ -1,7 +1,8 @@
 package main
 
-import "gitlab.mapan.io/playground/parking-lot-golang/common"
+import "github.com/skyezon/parking-lot/common"
 
-func main(){
-    common.Router() 
+func main() {
+	//TODO : go backup() every x minute?
+	common.Router()
 }

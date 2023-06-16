@@ -1,5 +1,5 @@
-module gitlab.mapan.io/playground/parking-lot-golang
+module github.com/skyezon/parking-lot
 
 go 1.15
 
-require github.com/go-chi/chi/v5 v5.0.8 // indirect
+require github.com/go-chi/chi/v5 v5.0.8
