@@ -14,7 +14,8 @@ type Case struct {
 	ExpectedPayload string
 }
 
-func main() {
+//initial state the function name is :  main
+func test() {
 	url := flag.String("url", "http://localhost:8080", "targeted server url")
 	testCase := flag.Int("case", 1, "which test case")
 
