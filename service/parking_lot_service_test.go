@@ -210,26 +210,26 @@ func Test_GetSlotByRegisNum(t *testing.T) {
 		name                string
 		isParkingLotCreated bool
 		isErr               bool
-        isFilled bool
+		isFilled            bool
 	}{
 		{
 			name:                "error not found",
 			isParkingLotCreated: true,
 			isErr:               true,
-            isFilled: false,
+			isFilled:            false,
 		},
 		{
 			name:                "invalid",
 			isParkingLotCreated: false,
 			isErr:               true,
-            isFilled: false,
+			isFilled:            false,
 		},
-        {
-            name: "valid",
-            isParkingLotCreated: true,
-            isErr: false,
-            isFilled: true,
-        },
+		{
+			name:                "valid",
+			isParkingLotCreated: true,
+			isErr:               false,
+			isFilled:            true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -239,11 +239,11 @@ func Test_GetSlotByRegisNum(t *testing.T) {
 			} else {
 				model.GlobalLot = nil
 			}
-            if tt.isFilled {
-                lot, _ := model.GetLotInstance()
-                lot.Park(model.Car{Color: "blue",RegisNumber: "bk-1234-abc"})
+			if tt.isFilled {
+				lot, _ := model.GetLotInstance()
+				lot.Park(model.Car{Color: "blue", RegisNumber: "bk-1234-abc"})
 
-            }
+			}
 			_, err := GetSlotByRegisNum("BK-1234-ABC")
 			if (err != nil) != tt.isErr {
 				t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE, tt.isErr, err)
@@ -252,15 +252,15 @@ func Test_GetSlotByRegisNum(t *testing.T) {
 	}
 }
 
-func Test_BulkCommander(t *testing.T){
-    tests := []struct{
-        name string
-        payload string
-        expectedValue string
-    }{
-        {
-            name: "valid",
-            payload: `create_parking_lot 6
+func Test_BulkCommander(t *testing.T) {
+	tests := []struct {
+		name          string
+		payload       string
+		expectedValue string
+	}{
+		{
+			name: "valid",
+			payload: `create_parking_lot 6
 park B-1234-RFS Black
 park B-1999-RFD Green
 park B-1000-RFS Black
@@ -276,7 +276,7 @@ slot_numbers_for_cars_with_colour Black
 slot_number_for_registration_number B-1701-RFL
 slot_number_for_registration_number RI-1
 `,
-            expectedValue: `Created a parking lot with 6 slots
+			expectedValue: `Created a parking lot with 6 slots
 Allocated slot number: 1
 Allocated slot number: 2
 Allocated slot number: 3
@@ -297,59 +297,83 @@ B-1234-RFS, B-1000-RFS, B-1333-RFS, B-1141-RFS
 5
 Not found
 `,
-
-        },
-        {
-            name: "invalid",
-            payload: `create_parking_lot 6
+		},
+		{
+			name: "invalid",
+			payload: `create_parking_lot 6
 park B-1234-RFS Black
 park B-1999-RFDb Green`,
-expectedValue: `Created a parking lot with 6 slots
+			expectedValue: `Created a parking lot with 6 slots
 Allocated slot number: 1
 Registration number is invalid`,
+		},
+		{
+			name: " error insufficient param",
+			payload: `create_parking_lot 6
+park B-1234-RFS 
+leave 
+status
+park B-1333-RFS 
+park 1989-RFU BlueSky
+registration_numbers_for_cars_with_colour 
+slot_numbers_for_cars_with_colour 
+slot_number_for_registration_number 1701-RFL
+slot_number_for_registration_number 
+`,
+			expectedValue: `Created a parking lot with 6 slots
+color cannot be empty
+invalid slot number
+Slot No. Registration No Colour
 
-        },
-    }
-    for _,tt := range tests{
-        t.Run(tt.name,func(t *testing.T) {
-            res := BulkCommander(tt.payload)
-            if res != tt.expectedValue{
-                t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE,tt.expectedValue,res)
-            }
-        })
-    }
+color cannot be empty
+Registration number is invalid
+color cannot be empty
+1, 2, 3, 4, 5, 6
+Not found
+Not found
+`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			res := BulkCommander(tt.payload)
+			if res != tt.expectedValue {
+				t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE, tt.expectedValue, res)
+			}
+		})
+	}
 }
 
-func Test_executeCommand(t *testing.T){
-    tests := []struct{
-        name string
-        oneCommand string
-        isErr bool
-        expectedValue string
-    }{
-        {
-            name : "valid",
-            oneCommand:  "create_parking_lot 6",
-            isErr: false,
-            expectedValue: "Created a parking lot with 6 slots",
-        },
-        {
-            name :"invalid",
-            oneCommand: "create_parking_lot -1",
-            isErr: true,
-            expectedValue: "",
-        },
-    }
+func Test_executeCommand(t *testing.T) {
+	tests := []struct {
+		name          string
+		oneCommand    string
+		isErr         bool
+		expectedValue string
+	}{
+		{
+			name:          "valid",
+			oneCommand:    "create_parking_lot 6",
+			isErr:         false,
+			expectedValue: "Created a parking lot with 6 slots",
+		},
+		{
+			name:          "invalid",
+			oneCommand:    "create_parking_lot -1",
+			isErr:         true,
+			expectedValue: "",
+		},
+	}
 
-    for _,tt := range tests{
-        t.Run(tt.name,func(t *testing.T) {
-            res, err := executeCommand(tt.oneCommand)
-            if (err != nil) != tt.isErr{
-                t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE,tt.isErr,err)
-            }
-            if err == nil && res != tt.expectedValue {
-                t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE,tt.expectedValue,res)
-            }
-        })
-    }
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			res, err := executeCommand(tt.oneCommand)
+			if (err != nil) != tt.isErr {
+				t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE, tt.isErr, err)
+			}
+			if err == nil && res != tt.expectedValue {
+				t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE, tt.expectedValue, res)
+			}
+		})
+	}
 }

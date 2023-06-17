@@ -13,7 +13,7 @@ const PARKING_LOT_IS_NOT_INTIALIZED = "Please initialize Lot first"
 var INSUFFICIENT_PARAMETER = fmt.Errorf("Parameters are insufficient")
 var VALIDATION_REGIS_NUMBER_ERROR = fmt.Errorf("Registration number is invalid")
 
-//easier error tracking
+//easier error tracking & debuggin purposes
 func LogErr(err error, msgToDev ...string) error {
 	pc := make([]uintptr, 5)
 	n := runtime.Callers(2, pc)

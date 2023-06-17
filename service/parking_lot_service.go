@@ -68,6 +68,9 @@ func StatusParkingLot() (string, error) {
 }
 
 func GetRegisNumberByColor(color string) (string, error) {
+    if color == ""{
+        return "", errors.LogErr(fmt.Errorf("color cannot be empty"))
+    }
 	currLot, err := model.GetLotInstance()
 	if err != nil {
 		return "", errors.LogErr(err)

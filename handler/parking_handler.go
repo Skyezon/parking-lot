@@ -28,7 +28,7 @@ func LeaveHandler(w http.ResponseWriter, r *http.Request) {
 	slotInt, err := strconv.Atoi(slot)
 	if err != nil {
 		
-		w.Write([]byte(err.Error()))
+		w.Write([]byte("slot number invalid"))
 		return
 	}
 	absoluteSlot := slotInt - 1
@@ -46,7 +46,7 @@ func CreateParkingHandler(w http.ResponseWriter, r *http.Request) {
 	totalLotInt, err := strconv.Atoi(totalLot)
 	if err != nil {
 		
-		w.Write([]byte(err.Error()))
+		w.Write([]byte("Maximum lot number is invalid"))
 		return
 	}
 	err = service.CreateParkingLot(totalLotInt)
