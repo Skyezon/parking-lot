@@ -251,3 +251,105 @@ func Test_GetSlotByRegisNum(t *testing.T) {
 		})
 	}
 }
+
+func Test_BulkCommander(t *testing.T){
+    tests := []struct{
+        name string
+        payload string
+        expectedValue string
+    }{
+        {
+            name: "valid",
+            payload: `create_parking_lot 6
+park B-1234-RFS Black
+park B-1999-RFD Green
+park B-1000-RFS Black
+park B-1777-RFU BlueSky
+park B-1701-RFL Blue
+park B-1141-RFS Black
+leave 4
+status
+park B-1333-RFS Black
+park B-1989-RFU BlueSky
+registration_numbers_for_cars_with_colour Black
+slot_numbers_for_cars_with_colour Black
+slot_number_for_registration_number B-1701-RFL
+slot_number_for_registration_number RI-1
+`,
+            expectedValue: `Created a parking lot with 6 slots
+Allocated slot number: 1
+Allocated slot number: 2
+Allocated slot number: 3
+Allocated slot number: 4
+Allocated slot number: 5
+Allocated slot number: 6
+Slot number 4 is free
+Slot No. Registration No Colour
+1 B-1234-RFS Black
+2 B-1999-RFD Green
+3 B-1000-RFS Black
+5 B-1701-RFL Blue
+6 B-1141-RFS Black
+Allocated slot number: 4
+Sorry, parking lot is full
+B-1234-RFS, B-1000-RFS, B-1333-RFS, B-1141-RFS
+1, 3, 4, 6
+5
+Not found
+`,
+
+        },
+        {
+            name: "invalid",
+            payload: `create_parking_lot 6
+park B-1234-RFS Black
+park B-1999-RFDb Green`,
+expectedValue: `Created a parking lot with 6 slots
+Allocated slot number: 1
+Registration number is invalid`,
+
+        },
+    }
+    for _,tt := range tests{
+        t.Run(tt.name,func(t *testing.T) {
+            res := BulkCommander(tt.payload)
+            if res != tt.expectedValue{
+                t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE,tt.expectedValue,res)
+            }
+        })
+    }
+}
+
+func Test_executeCommand(t *testing.T){
+    tests := []struct{
+        name string
+        oneCommand string
+        isErr bool
+        expectedValue string
+    }{
+        {
+            name : "valid",
+            oneCommand:  "create_parking_lot 6",
+            isErr: false,
+            expectedValue: "Created a parking lot with 6 slots",
+        },
+        {
+            name :"invalid",
+            oneCommand: "create_parking_lot -1",
+            isErr: true,
+            expectedValue: "",
+        },
+    }
+
+    for _,tt := range tests{
+        t.Run(tt.name,func(t *testing.T) {
+            res, err := executeCommand(tt.oneCommand)
+            if (err != nil) != tt.isErr{
+                t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE,tt.isErr,err)
+            }
+            if err == nil && res != tt.expectedValue {
+                t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE,tt.expectedValue,res)
+            }
+        })
+    }
+}

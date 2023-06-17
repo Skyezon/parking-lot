@@ -123,7 +123,7 @@ func GetSlotByRegisNum(regisNumber string) (string, error) {
 	return "", errors.LogErr(fmt.Errorf(errors.NOT_FOUND))
 }
 
-func BulkCommander(payload string) (string, error) {
+func BulkCommander(payload string) (string) {
 	res := ""
 	commands := strings.Split(payload, "\n")
 	for idx, command := range commands {
@@ -137,8 +137,7 @@ func BulkCommander(payload string) (string, error) {
             res += "\n"
         } 
 	}
-	// return strings.TrimSuffix(res,"\n"), nil
-    return res,nil
+    return res
 }
 
 func executeCommand(onelinePayload string) (string, error) {

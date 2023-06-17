@@ -109,7 +109,7 @@ func BulkCommandHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	payload := string(body)
-	res, err := service.BulkCommander(payload)
+	res := service.BulkCommander(payload)
 
 	if err != nil {
 	

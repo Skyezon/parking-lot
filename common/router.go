@@ -8,26 +8,26 @@ import (
 	"github.com/skyezon/parking-lot/handler"
 )
 
-func Serve(){
-    router:= chi.NewRouter()
+func Serve() {
+	router := chi.NewRouter()
 
-    router.Post("/park/{platNumber}/{color}",handler.ParkHandler)
-    
-    router.Post("/create_parking_lot/{totalParkingLot}",handler.CreateParkingHandler)
+	router.Post("/park/{platNumber}/{color}", handler.ParkHandler)
 
-    router.Post("/leave/{slotNumber}",handler.LeaveHandler)
+	router.Post("/create_parking_lot/{totalParkingLot}", handler.CreateParkingHandler)
 
-    router.Get("/status",handler.StatusHandler)
+	router.Post("/leave/{slotNumber}", handler.LeaveHandler)
 
-    router.Get("/cars_registration_numbers/colour/{color}",handler.FindRegisNumberByColorHandler)
+	router.Get("/status", handler.StatusHandler)
 
-    router.Get("/cars_slot/colour/{color}", handler.FindCarSlotsByColorHandler)
+	router.Get("/cars_registration_numbers/colour/{color}", handler.FindRegisNumberByColorHandler)
 
-    router.Get("/slot_number/car_registration_number/{regisNumber}",handler.FindSlotNumberbyRegisNumberHandler)
+	router.Get("/cars_slot/colour/{color}", handler.FindCarSlotsByColorHandler)
 
-    router.Post("/bulk",handler.BulkCommandHandler)
+	router.Get("/slot_number/car_registration_number/{regisNumber}", handler.FindSlotNumberbyRegisNumberHandler)
 
-    fmt.Println("Server running on port :8080")
+	router.Post("/bulk", handler.BulkCommandHandler)
 
-    http.ListenAndServe(":8080",router)
+	fmt.Println("Server running on port :8080")
+
+	http.ListenAndServe(":8080", router)
 }

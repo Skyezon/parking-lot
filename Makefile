@@ -6,7 +6,7 @@ run:
 	./bin/ParkingLot
 
 test:
-	go test ./...
+	go test ./... -cover
 
 test-functional:
 	go run functional_testing/functional_testing.go -url=http://localhost:8080 -case=1

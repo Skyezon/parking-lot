@@ -8,7 +8,7 @@ import (
 
 const PARKING_LOT_FULL_ERR = "Sorry, parking lot is full"
 const NOT_FOUND = "Not found"
-const UNIT_TEST_ERR_TEMPLATE = "expected err not match, expected : %v, actual : %v"
+const UNIT_TEST_ERR_TEMPLATE = "expected & actual not match, expected : %v, actual : %v"
 const PARKING_LOT_IS_NOT_INTIALIZED = "Please initialize Lot first"
 var INSUFFICIENT_PARAMETER = fmt.Errorf("Parameters are insufficient")
 var VALIDATION_REGIS_NUMBER_ERROR = fmt.Errorf("Registration number is invalid")
