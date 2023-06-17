@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -14,7 +15,7 @@ func ParkHandler(w http.ResponseWriter, r *http.Request) {
 	color := chi.URLParam(r, "color")
 	slot, err := service.ParkParkingLot(regisNumber, color)
 	if err != nil {
-		w.Write([]byte(err.Error()))
+        http.Error(w,err.Error(),http.StatusBadRequest)
 		return
 	}
 	w.Write([]byte(fmt.Sprintf("Allocated slot number: %d", slot)))
@@ -25,13 +26,13 @@ func LeaveHandler(w http.ResponseWriter, r *http.Request) {
 	slot := chi.URLParam(r, "slotNumber")
 	slotInt, err := strconv.Atoi(slot)
 	if err != nil {
-		w.Write([]byte("Slot number is invalid"))
+        http.Error(w,err.Error(),http.StatusBadRequest)
 		return
 	}
 	absoluteSlot := slotInt - 1
 	err = service.LeaveParkingLot(absoluteSlot)
 	if err != nil {
-		w.Write([]byte(err.Error()))
+        http.Error(w,err.Error(),http.StatusBadRequest)
 		return
 	}
 	w.Write([]byte(fmt.Sprintf("Slot number %d is free", slotInt)))
@@ -41,12 +42,12 @@ func CreateParkingHandler(w http.ResponseWriter, r *http.Request) {
 	totalLot := chi.URLParam(r, "totalParkingLot")
 	totalLotInt, err := strconv.Atoi(totalLot)
 	if err != nil {
-		w.Write([]byte(err.Error()))
+        http.Error(w,err.Error(),http.StatusBadRequest)
 		return
 	}
 	err = service.CreateParkingLot(totalLotInt)
 	if err != nil {
-		w.Write([]byte(err.Error()))
+        http.Error(w,err.Error(),http.StatusBadRequest)
 		return
 	}
 	w.Write([]byte(fmt.Sprintf("Created a parking lot with %s slots", totalLot)))
@@ -55,7 +56,7 @@ func CreateParkingHandler(w http.ResponseWriter, r *http.Request) {
 func StatusHandler(w http.ResponseWriter, r *http.Request) {
     res, err := service.StatusParkingLot()
     if err != nil {
-        w.Write([]byte(err.Error()))
+        http.Error(w,err.Error(),http.StatusBadRequest)
         return
     }
     w.Write([]byte(res))
@@ -65,7 +66,8 @@ func FindRegisNumberByColorHandler(w http.ResponseWriter, r *http.Request) {
     color := chi.URLParam(r,"color")
     res, err := service.GetRegisNumberByColor(color)
     if err != nil {
-        w.Write([]byte(err.Error()))
+        http.Error(w,err.Error(),http.StatusBadRequest)
+        return
     }
     w.Write([]byte(res))
 }
@@ -74,7 +76,8 @@ func FindCarSlotsByColorHandler(w http.ResponseWriter, r *http.Request) {
     color := chi.URLParam(r,"color")
     res , err := service.GetSlotByColor(color)
     if err != nil {
-        w.Write([]byte(err.Error()))
+        http.Error(w,err.Error(),http.StatusBadRequest)
+        return
     }
     w.Write([]byte(res))
 }
@@ -83,11 +86,24 @@ func FindSlotNumberbyRegisNumberHandler(w http.ResponseWriter, r *http.Request) 
     regisNumber := chi.URLParam(r,"regisNumber")
     res, err := service.GetSlotByRegisNum(regisNumber)
     if err != nil {
-        w.Write([]byte(err.Error()))
+        http.Error(w,err.Error(),http.StatusBadRequest)
+        return
     }
     w.Write([]byte(res))
 }
-
+ 
 func BulkCommandHandler(w http.ResponseWriter,r *http.Request){
-    w.Write([]byte("bulk"))
+    body, err := ioutil.ReadAll(r.Body)
+    if err != nil {
+       http.Error(w,err.Error(),http.StatusBadRequest) 
+       return
+    }
+    payload := string(body)
+    res, err := service.BulkCommander(payload)
+
+    if err != nil {
+        http.Error(w,err.Error(),http.StatusBadRequest)
+        return
+    }
+    w.Write([]byte(res))
 }

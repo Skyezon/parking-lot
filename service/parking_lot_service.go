@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/skyezon/parking-lot/common/errors"
@@ -58,7 +59,10 @@ func StatusParkingLot() (string, error) {
 		if car == (model.Car{}) {
 			continue
 		}
-		res += fmt.Sprintf("%d %s %s\n", idx+1, car.RegisNumber, car.Color)
+		res += fmt.Sprintf("%d %s %s", idx+1, car.RegisNumber, car.Color)
+        if idx != len(currLot.Lots)-1{
+            res += "\n"
+        }
 	}
 	return res, nil
 }
@@ -117,4 +121,108 @@ func GetSlotByRegisNum(regisNumber string) (string, error) {
 		}
 	}
 	return "", errors.LogErr(fmt.Errorf(errors.NOT_FOUND))
+}
+
+func BulkCommander(payload string) (string, error) {
+	res := ""
+	commands := strings.Split(payload, "\n")
+	for idx, command := range commands {
+		tempRes, err := executeCommand(command)
+		if err == nil {
+			res += tempRes 
+		} else {
+			res += err.Error() 
+		}
+        if idx != len(commands) -1 {
+            res += "\n"
+        } 
+	}
+	return res, nil
+}
+
+func executeCommand(onelinePayload string) (string, error) {
+	splitted := strings.Split(onelinePayload, " ")
+	if len(splitted) == 0 {
+		return "", errors.LogErr(errors.INSUFFICIENT_PARAMETER)
+	}
+
+	switch splitted[0] {
+	case "create_parking_lot":
+		if len(splitted) < 2 {
+			return "", errors.LogErr(errors.INSUFFICIENT_PARAMETER)
+		}
+		totalLot := splitted[1]
+		totalLotInt, err := strconv.Atoi(totalLot)
+		if err != nil {
+			return "", errors.LogErr(err)
+		}
+		err = CreateParkingLot(totalLotInt)
+		if err != nil {
+			return "", errors.LogErr(err)
+		}
+		return fmt.Sprintf("Created a parking lot with %d slots", totalLotInt), nil
+	case "park":
+		if len(splitted) < 3 {
+			return "", errors.LogErr(errors.INSUFFICIENT_PARAMETER)
+		}
+		regisNum := splitted[1]
+		color := splitted[2]
+		slot, err := ParkParkingLot(regisNum, color)
+		if err != nil {
+			return "", errors.LogErr(err)
+		}
+		return fmt.Sprintf("Allocated slot number: %d", slot), nil
+	case "leave":
+		if len(splitted) < 2 {
+			return "", errors.LogErr(errors.INSUFFICIENT_PARAMETER)
+		}
+		slot := splitted[1]
+		slotInt, err := strconv.Atoi(slot)
+		if err != nil {
+			return "", errors.LogErr(fmt.Errorf("invalid slot number"))
+		}
+		err = LeaveParkingLot(slotInt - 1)
+		if err != nil {
+			return "", errors.LogErr(err)
+		}
+		return fmt.Sprintf("Slot number %d is free", slotInt), nil
+	case "status":
+		res, err := StatusParkingLot()
+		if err != nil {
+			return "", errors.LogErr(err)
+		}
+		return res , nil
+	case "registration_numbers_for_cars_with_colour":
+		if len(splitted) < 2 {
+			return "", errors.LogErr(errors.INSUFFICIENT_PARAMETER)
+		}
+		color := splitted[1]
+		res, err := GetRegisNumberByColor(color)
+		if err != nil {
+			return "", errors.LogErr(err)
+		}
+		return res , nil
+	case "slot_number_for_registration_number":
+		if len(splitted) < 2 {
+			return "", errors.LogErr(errors.INSUFFICIENT_PARAMETER)
+		}
+		regisNumber := splitted[1]
+		res, err := GetSlotByRegisNum(regisNumber)
+		if err != nil {
+			return "", errors.LogErr(err)
+		}
+		return res , nil
+	case "slot_numbers_for_cars_with_colour":
+		if len(splitted) < 2 {
+			return "", errors.LogErr(errors.INSUFFICIENT_PARAMETER)
+		}
+		color := splitted[1]
+		res, err := GetSlotByColor(color)
+		if err != nil {
+			return "", errors.LogErr(errors.INSUFFICIENT_PARAMETER)
+		}
+		return res , nil
+	default:
+		return "command unknown", nil
+	}
 }
