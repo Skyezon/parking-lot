@@ -55,15 +55,16 @@ func StatusParkingLot() (string, error) {
 		return "", errors.LogErr(err)
 	}
 	res := "Slot No. Registration No Colour\n"
-	for idx, car := range currLot.Lots {
-		if car == (model.Car{}) {
-			continue
-		}
-		res += fmt.Sprintf("%d %s %s", idx+1, car.RegisNumber, car.Color)
-        if idx != len(currLot.Lots)-1{
+    for i:= 0 ;i < currLot.TotalLot ; i++ {
+        if currLot.Lots[i] == (model.Car{}){
+            continue
+        }
+		res += fmt.Sprintf("%d %s %s", i+1, currLot.Lots[i].RegisNumber, currLot.Lots[i].Color)
+        if i != currLot.TotalLot -1 {
             res += "\n"
         }
-	}
+
+    }
 	return res, nil
 }
 
