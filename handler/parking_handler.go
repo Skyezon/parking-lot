@@ -14,11 +14,31 @@ func HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ParkHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("ngepark"))
+	regisNumber := chi.URLParam(r, "platNumber")
+	color := chi.URLParam(r, "color")
+	slot, err := service.ParkParkingLot(regisNumber, color)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write([]byte(fmt.Sprintf("Allocated slot number: %d", slot)))
+
 }
 
 func LeaveHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("ngeleave"))
+	slot := chi.URLParam(r, "slotNumber")
+	slotInt, err := strconv.Atoi(slot)
+	if err != nil {
+		w.Write([]byte("Slot number is invalid"))
+		return
+	}
+	absoluteSlot := slotInt - 1
+	err = service.LeaveParkingLot(absoluteSlot)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write([]byte(fmt.Sprintf("Slot number %d is free", slotInt)))
 }
 
 func CreateParkingHandler(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +57,12 @@ func CreateParkingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func StatusHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("get status"))
+    res, err := service.StatusParkingLot()
+    if err != nil {
+        w.Write([]byte(err.Error()))
+        return
+    }
+    w.Write([]byte(res))
 }
 
 func FindRegisNumberByColor(w http.ResponseWriter, r *http.Request) {
