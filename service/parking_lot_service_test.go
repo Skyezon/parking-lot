@@ -67,75 +67,187 @@ func Test_ParkParkingLot(t *testing.T) {
 	}
 }
 
-func Test_LeaveParkingLot(t * testing.T){
-    tests := []struct{
-        name string
-        absoluteSlotNumber int
-        isErr bool
-    }{
-        {
-            name: "valid",
-            absoluteSlotNumber: 0,
-            isErr: false,
-        },
-        {
-            name: "invalid high absolute slot number",
-            absoluteSlotNumber: 100,
-            isErr: true,
-        },
-        {
-            name: "invalid low absolute slot number",
-            absoluteSlotNumber: -1,
-            isErr: true,
-        },
-    }
+func Test_LeaveParkingLot(t *testing.T) {
+	tests := []struct {
+		name               string
+		absoluteSlotNumber int
+		isErr              bool
+	}{
+		{
+			name:               "valid",
+			absoluteSlotNumber: 0,
+			isErr:              false,
+		},
+		{
+			name:               "invalid high absolute slot number",
+			absoluteSlotNumber: 100,
+			isErr:              true,
+		},
+		{
+			name:               "invalid low absolute slot number",
+			absoluteSlotNumber: -1,
+			isErr:              true,
+		},
+	}
 
-    model.NewParkingLot(10)
-    lot, _ := model.GetLotInstance()
-    lot.Park(model.Car{})
-    
-    for _,tt := range tests{
-        t.Run(tt.name,func(t *testing.T) {
-            err := LeaveParkingLot(tt.absoluteSlotNumber)
-            if (err != nil) != tt.isErr{
-                t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE,tt.isErr,err)
-            }
-            
-        })
-    }
+	model.NewParkingLot(10)
+	lot, _ := model.GetLotInstance()
+	lot.Park(model.Car{})
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := LeaveParkingLot(tt.absoluteSlotNumber)
+			if (err != nil) != tt.isErr {
+				t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE, tt.isErr, err)
+			}
+
+		})
+	}
 
 }
 
-func Test_StatusParkingLot(t *testing.T){
-    tests := []struct{
-        name string
-        isParkingLotCreated bool
-        isErr bool
-    }{
+func Test_StatusParkingLot(t *testing.T) {
+	tests := []struct {
+		name                string
+		isParkingLotCreated bool
+		isErr               bool
+	}{
+		{
+			name:                "valid",
+			isParkingLotCreated: true,
+			isErr:               false,
+		},
+		{
+			name:                "invalid",
+			isParkingLotCreated: false,
+			isErr:               true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.isParkingLotCreated {
+				model.NewParkingLot(10)
+			} else {
+				model.GlobalLot = nil
+			}
+			_, err := StatusParkingLot()
+			if (err != nil) != tt.isErr {
+				t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE, tt.isErr, err)
+			}
+		})
+	}
+}
+
+func Test_GetRegisNumberByColor(t *testing.T) {
+	tests := []struct {
+		name                string
+		isParkingLotCreated bool
+		isErr               bool
+	}{
+		{
+			name:                "valid",
+			isParkingLotCreated: true,
+			isErr:               false,
+		},
+		{
+			name:                "invalid",
+			isParkingLotCreated: false,
+			isErr:               true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.isParkingLotCreated {
+				model.NewParkingLot(10)
+			} else {
+				model.GlobalLot = nil
+			}
+			_, err := GetRegisNumberByColor("abc")
+			if (err != nil) != tt.isErr {
+				t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE, tt.isErr, err)
+			}
+		})
+	}
+}
+
+func Test_GetSlotByColor(t *testing.T) {
+	tests := []struct {
+		name                string
+		isParkingLotCreated bool
+		isErr               bool
+	}{
+		{
+			name:                "valid",
+			isParkingLotCreated: true,
+			isErr:               false,
+		},
+		{
+			name:                "invalid",
+			isParkingLotCreated: false,
+			isErr:               true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.isParkingLotCreated {
+				model.NewParkingLot(10)
+			} else {
+				model.GlobalLot = nil
+			}
+			_, err := GetSlotByColor("abc")
+			if (err != nil) != tt.isErr {
+				t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE, tt.isErr, err)
+			}
+		})
+	}
+}
+
+func Test_GetSlotByRegisNum(t *testing.T) {
+	tests := []struct {
+		name                string
+		isParkingLotCreated bool
+		isErr               bool
+        isFilled bool
+	}{
+		{
+			name:                "error not found",
+			isParkingLotCreated: true,
+			isErr:               true,
+            isFilled: false,
+		},
+		{
+			name:                "invalid",
+			isParkingLotCreated: false,
+			isErr:               true,
+            isFilled: false,
+		},
         {
             name: "valid",
             isParkingLotCreated: true,
             isErr: false,
+            isFilled: true,
         },
-        {
-            name: "invalid",
-            isParkingLotCreated: false,
-            isErr: true,
-        },
-    }
+	}
 
-    for _,tt := range tests{
-        t.Run(tt.name,func(t *testing.T) {
-            if tt.isParkingLotCreated{
-                model.NewParkingLot(10)
-            }else{
-                model.GlobalLot = nil
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.isParkingLotCreated {
+				model.NewParkingLot(10)
+			} else {
+				model.GlobalLot = nil
+			}
+            if tt.isFilled {
+                lot, _ := model.GetLotInstance()
+                lot.Park(model.Car{Color: "blue",RegisNumber: "bk-1234-abc"})
+
             }
-            _, err := StatusParkingLot()
-            if (err != nil) != tt.isErr{
-                t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE,tt.isErr,err)
-            }
-        })
-    }
+			_, err := GetSlotByRegisNum("BK-1234-ABC")
+			if (err != nil) != tt.isErr {
+				t.Errorf(errors.UNIT_TEST_ERR_TEMPLATE, tt.isErr, err)
+			}
+		})
+	}
 }
-

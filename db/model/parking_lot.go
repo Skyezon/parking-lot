@@ -19,7 +19,7 @@ func GetLotInstance() (*ParkingLot,error){
     if GlobalLot != nil {
         return GlobalLot,nil
     }
-    return &ParkingLot{}, errors.LogErr(fmt.Errorf("Please initialize Lot first"))
+    return &ParkingLot{}, errors.LogErr(fmt.Errorf(errors.PARKING_LOT_IS_NOT_INTIALIZED))
 }
 
 func NewParkingLot(totalLot int) (error) {
@@ -65,6 +65,6 @@ func (lot ParkingLot) findNextFreeSlot() (int, error) {
 			return i, nil
 		}
 	}
-	return 0, fmt.Errorf("No empty lot")
+	return 0, fmt.Errorf(errors.PARKING_LOT_FULL_ERR)
 }
 

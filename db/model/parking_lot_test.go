@@ -241,3 +241,5 @@ func Test_GetLotInstance(t *testing.T) {
 		})
 	}
 }
+
+

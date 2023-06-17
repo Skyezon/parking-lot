@@ -1,4 +1,4 @@
-package main
+package functionaltesting
 
 import (
 	"bytes"
@@ -15,7 +15,7 @@ type Case struct {
 }
 
 //initial state the function name is :  main
-func test() {
+func main() {
 	url := flag.String("url", "http://localhost:8080", "targeted server url")
 	testCase := flag.Int("case", 1, "which test case")
 

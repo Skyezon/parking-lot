@@ -8,10 +8,8 @@ import (
 	"github.com/skyezon/parking-lot/handler"
 )
 
-func Router(){
+func Serve(){
     router:= chi.NewRouter()
-
-    router.Get("/",handler.HelloWorldHandler)
 
     router.Post("/park/{platNumber}/{color}",handler.ParkHandler)
     
@@ -21,11 +19,13 @@ func Router(){
 
     router.Get("/status",handler.StatusHandler)
 
-    router.Get("/cars_registration/colour/{color}",handler.FindRegisNumberByColor)
+    router.Get("/cars_registration_numbers/colour/{color}",handler.FindRegisNumberByColorHandler)
 
-    router.Get("/cars_slot/colour/{color}", handler.FindCarSlotsByColor)
+    router.Get("/cars_slot/colour/{color}", handler.FindCarSlotsByColorHandler)
 
-    router.Get("/slot_number/car_registration_number/{regisNumber}",handler.FindSlotNumberbyRegisNumber)
+    router.Get("/slot_number/car_registration_number/{regisNumber}",handler.FindSlotNumberbyRegisNumberHandler)
+
+    router.Post("/bulk",handler.BulkCommandHandler)
 
     fmt.Println("Server running on port :8080")
 

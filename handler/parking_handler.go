@@ -9,10 +9,6 @@ import (
 	"github.com/skyezon/parking-lot/service"
 )
 
-func HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello world"))
-}
-
 func ParkHandler(w http.ResponseWriter, r *http.Request) {
 	regisNumber := chi.URLParam(r, "platNumber")
 	color := chi.URLParam(r, "color")
@@ -65,14 +61,33 @@ func StatusHandler(w http.ResponseWriter, r *http.Request) {
     w.Write([]byte(res))
 }
 
-func FindRegisNumberByColor(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("find regis number by color"))
+func FindRegisNumberByColorHandler(w http.ResponseWriter, r *http.Request) {
+    color := chi.URLParam(r,"color")
+    res, err := service.GetRegisNumberByColor(color)
+    if err != nil {
+        w.Write([]byte(err.Error()))
+    }
+    w.Write([]byte(res))
 }
 
-func FindCarSlotsByColor(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("find slot by color"))
+func FindCarSlotsByColorHandler(w http.ResponseWriter, r *http.Request) {
+    color := chi.URLParam(r,"color")
+    res , err := service.GetSlotByColor(color)
+    if err != nil {
+        w.Write([]byte(err.Error()))
+    }
+    w.Write([]byte(res))
 }
 
-func FindSlotNumberbyRegisNumber(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("find slot number by regis number"))
+func FindSlotNumberbyRegisNumberHandler(w http.ResponseWriter, r *http.Request) {
+    regisNumber := chi.URLParam(r,"regisNumber")
+    res, err := service.GetSlotByRegisNum(regisNumber)
+    if err != nil {
+        w.Write([]byte(err.Error()))
+    }
+    w.Write([]byte(res))
+}
+
+func BulkCommandHandler(w http.ResponseWriter,r *http.Request){
+    w.Write([]byte("bulk"))
 }
