@@ -137,7 +137,8 @@ func BulkCommander(payload string) (string, error) {
             res += "\n"
         } 
 	}
-	return res, nil
+	// return strings.TrimSuffix(res,"\n"), nil
+    return res,nil
 }
 
 func executeCommand(onelinePayload string) (string, error) {
@@ -145,6 +146,9 @@ func executeCommand(onelinePayload string) (string, error) {
 	if len(splitted) == 0 {
 		return "", errors.LogErr(errors.INSUFFICIENT_PARAMETER)
 	}
+    for idx,split := range splitted{
+        splitted[idx] = strings.TrimSpace(split)
+    }
 
 	switch splitted[0] {
 	case "create_parking_lot":
@@ -223,6 +227,6 @@ func executeCommand(onelinePayload string) (string, error) {
 		}
 		return res , nil
 	default:
-		return "command unknown", nil
+		return "", nil
 	}
 }

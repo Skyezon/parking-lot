@@ -1,4 +1,4 @@
-package functionaltesting
+package main
 
 import (
 	"bytes"
