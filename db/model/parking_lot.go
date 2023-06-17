@@ -2,17 +2,38 @@ package model
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 
 	"github.com/skyezon/parking-lot/common/errors"
 )
+
+var GlobalLot *ParkingLot
 
 type ParkingLot struct {
 	TotalLot int
 	Lots     []Car
 }
 
-func (lot ParkingLot) Park(theCar Car) error {
+func GetLotInstance() (*ParkingLot,error){
+    if GlobalLot != nil {
+        return GlobalLot,nil
+    }
+    return &ParkingLot{}, errors.LogErr(fmt.Errorf("Please initialize Lot first"))
+}
+
+func NewParkingLot(totalLot int) (error) {
+	if totalLot <= 0 || totalLot >= math.MaxInt32{
+		return  errors.LogErr(fmt.Errorf("Maximum lot number is invalid"))
+	}
+    GlobalLot = &ParkingLot{
+        TotalLot : totalLot,
+        Lots: make([]Car,totalLot),
+    }
+    return nil
+}
+
+func (lot *ParkingLot)Park(theCar Car) error {
 	slot, err := lot.findNextFreeSlot()
 	if err != nil {
 		return errors.LogErr(err)
@@ -22,9 +43,9 @@ func (lot ParkingLot) Park(theCar Car) error {
 }
 
 // absolute means real location in array, e.g : user input 4, then absolute is 3
-func (lot ParkingLot) Leave(absoluteSlotNumber int) error {
+func (lot *ParkingLot) Leave(absoluteSlotNumber int) error {
 	if err := lot.validateSlotNumber(absoluteSlotNumber); err != nil {
-		return err
+		return errors.LogErr(err) 
 	}
 	lot.Lots[absoluteSlotNumber] = Car{}
 	return nil
@@ -47,13 +68,3 @@ func (lot ParkingLot) findNextFreeSlot() (int, error) {
 	return 0, fmt.Errorf("No empty lot")
 }
 
-func NewParkingLot(totalLot int) (ParkingLot, error) {
-	if totalLot <= 0 {
-		return ParkingLot{}, fmt.Errorf("Maximum lot number is invalid")
-	}
-
-	return ParkingLot{
-		TotalLot: totalLot,
-		Lots:     make([]Car, 0, totalLot),
-	}, nil
-}

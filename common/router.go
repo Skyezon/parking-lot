@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -25,6 +26,8 @@ func Router(){
     router.Get("/cars_slot/colour/{color}", handler.FindCarSlotsByColor)
 
     router.Get("/slot_number/car_registration_number/{regisNumber}",handler.FindSlotNumberbyRegisNumber)
+
+    fmt.Println("Server running on port :8080")
 
     http.ListenAndServe(":8080",router)
 }
