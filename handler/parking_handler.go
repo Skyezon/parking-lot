@@ -33,7 +33,6 @@ func CreateParkingHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-
 	w.Write([]byte(fmt.Sprintf("Created a parking lot with %s slots", totalLot)))
 }
 

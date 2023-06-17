@@ -33,13 +33,13 @@ func NewParkingLot(totalLot int) (error) {
     return nil
 }
 
-func (lot *ParkingLot)Park(theCar Car) error {
+func (lot *ParkingLot)Park(theCar Car) (int,error) {
 	slot, err := lot.findNextFreeSlot()
 	if err != nil {
-		return errors.LogErr(err)
+		return 0, errors.LogErr(err)
 	}
 	lot.Lots[slot] = theCar
-	return nil
+	return slot, nil
 }
 
 // absolute means real location in array, e.g : user input 4, then absolute is 3
@@ -61,7 +61,7 @@ func (lot ParkingLot) validateSlotNumber(absoluteSlotNumber int) error {
 
 func (lot ParkingLot) findNextFreeSlot() (int, error) {
 	for i := 0; i < lot.TotalLot; i++ {
-		if lot.Lots[i] != (Car{}) {
+		if lot.Lots[i] == (Car{}) {
 			return i, nil
 		}
 	}
