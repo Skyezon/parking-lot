@@ -1,11 +1,19 @@
 # Readme
+
+Developed with : 
+- go 1.19 & 1.20
+
 ## Guide to run functional test
 ### Prerequisite
 1. Make sure you run installed go version >= `1.15.3`
 2. Run your program to serve port `8080`.
 
-### Run Functional Test
-1. `cd parking-lot-golang`
-2. `go mod download`
-3. To run first case: `go run functional_testing.go -url=http://localhost:8080 -case=1`
-4. To run second case: `go run functional_testing.go -url=http://localhost:8080 -case=2`
+### How to run project
+1. `cd parking-lot`
+2. `make run`
+
+### Run Functional Test & Unit tests
+1. `cd parking-lot`
+2. open two terminal in the root project ("parking-lot")
+3. in terminal 1 run `make run`
+4. in terminal 2 run `make test-all`
